@@ -1,0 +1,32 @@
+
+generator client { provider = "prisma-client-js" }
+datasource db { provider = "postgresql"; url = env("DATABASE_URL") }
+
+model Source { id Int @id @default(autoincrement()) name String url String @unique type String articles Article[] }
+model Article {
+  id BigInt @id @default(autoincrement())
+  source Source @relation(fields: [sourceId], references: [id])
+  sourceId Int
+  url String @unique
+  title String
+  publishedAt DateTime
+  summary String?
+  rawText String?
+  createdAt DateTime @default(now())
+  entities ArticleEntity[]
+  signals Signal[]
+}
+model Entity { id BigInt @id @default(autoincrement()) name String type String canonical String? articles ArticleEntity[] }
+model ArticleEntity {
+  article Article @relation(fields: [articleId], references: [id])
+  articleId BigInt
+  entity Entity @relation(fields: [entityId], references: [id])
+  entityId BigInt
+  confidence Float
+  sentiment Float
+  @@id([articleId, entityId])
+}
+model Signal { id BigInt @id @default(autoincrement()) article Article @relation(fields: [articleId], references: [id]) articleId BigInt theme String score Float rationale String region String? createdAt DateTime @default(now()) }
+model Watchlist { id Int @id @default(autoincrement()) userId String name String entities WatchlistEntity[] }
+model WatchlistEntity { watchlist Watchlist @relation(fields: [watchlistId], references: [id]) watchlistId Int entity Entity @relation(fields: [entityId], references: [id]) entityId BigInt @@id([watchlistId, entityId]) }
+model Subscription { id Int @id @default(autoincrement()) email String minScore Int @default(70) watchlistId Int? watchlist Watchlist? @relation(fields: [watchlistId], references: [id]) createdAt DateTime @default(now()) }

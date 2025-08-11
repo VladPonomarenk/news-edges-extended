@@ -1,0 +1,19 @@
+{
+  "rss": [
+    {
+      "name": "FT World",
+      "url": "https://www.ft.com/world/rss",
+      "type": "rss"
+    },
+    {
+      "name": "Reuters Business",
+      "url": "https://feeds.reuters.com/reuters/businessNews",
+      "type": "rss"
+    },
+    {
+      "name": "Nikkei Asia",
+      "url": "https://asia.nikkei.com/rss/feed/nar",
+      "type": "rss"
+    }
+  ]
+}

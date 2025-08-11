@@ -1,0 +1,4 @@
+
+import { prisma } from "@/lib/prisma"; import { NextRequest } from "next/server";
+export async function POST(req: NextRequest,{params}:{params:{id:string}}){ const {name}=await req.json(); const ent=await prisma.entity.upsert({where:{name},update:{},create:{name,type:"GENERIC"}}); const wlId=Number(params.id); await prisma.watchlistEntity.upsert({where:{watchlistId_entityId:{watchlistId:wlId,entityId:ent.id}},update:{},create:{watchlistId:wlId,entityId:ent.id}}); return Response.json({ok:true}); }
+export async function DELETE(req: NextRequest,{params}:{params:{id:string}}){ const {name}=await req.json(); const ent=await prisma.entity.findUnique({where:{name}}); if(!ent) return Response.json({ok:true}); await prisma.watchlistEntity.deleteMany({where:{watchlistId:Number(params.id),entityId:ent.id}}); return Response.json({ok:true}); }

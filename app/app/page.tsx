@@ -1,0 +1,1 @@
+import Link from "next/link"; export default ()=> (<div><h1 className="text-2xl font-semibold">Global Shifts & Niche Opportunities</h1><p className="text-gray-600 mt-2">Head to the ranked feed.</p><p className="mt-4"><Link className="underline" href="/opportunities">Open opportunities feed →</Link></p></div>);
