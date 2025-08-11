@@ -1,0 +1,33 @@
+name: Ingest + Alerts
+on:
+  schedule: [{ cron: "*/30 * * * *" }]
+  workflow_dispatch:
+jobs:
+  ingest:
+    runs-on: ubuntu-latest
+    defaults: { run: { working-directory: app } }
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: "20" }
+      - run: npm ci
+      - run: npm run db:push
+        env: { DATABASE_URL: ${{ secrets.DATABASE_URL }} }
+      - run: npm run seed
+        env: { DATABASE_URL: ${{ secrets.DATABASE_URL }} }
+      - run: npm run ingest
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          WORKER_URL: ${{ secrets.WORKER_URL }}
+          WORKER_API_KEY: ${{ secrets.WORKER_API_KEY }}
+      - run: npm run ingest:edgar
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          WORKER_URL: ${{ secrets.WORKER_URL }}
+          WORKER_API_KEY: ${{ secrets.WORKER_API_KEY }}
+          USER_AGENT: ${{ secrets.USER_AGENT }}
+      - run: npm run alerts:send
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          SENDGRID_API_KEY: ${{ secrets.SENDGRID_API_KEY }}
+          FROM_EMAIL: ${{ secrets.FROM_EMAIL }}
